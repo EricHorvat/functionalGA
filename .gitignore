@@ -1,0 +1,5 @@
+.stack-work/
+functionalGA.cabal
+out/
+.idea/
+*~
