@@ -22,7 +22,7 @@ import System.Random
 data Allele = A Int | B String | C Bool deriving Show
 
 mutateAllele :: Seed -> Allele -> Allele
-mutateAllele seed (A i) = A (head (randomRs (-15,15) seed))
+mutateAllele seed (A i) = A (head (randomRs (-1500,1500) seed))
 mutateAllele seed (B i) = B " "
 mutateAllele seed (C i) = C (head (fst (randInts seed 5)) `mod` 2 == 0)
 
