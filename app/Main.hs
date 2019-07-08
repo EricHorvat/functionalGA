@@ -37,12 +37,17 @@ main = do
   print crossed
   let iii = length crossed
   let mutated = [mutateChromosome (mutateRands!!i) (crossed!!i) | i <- [0..(iii-1)]] where mutateRands = randSeeds s3 6
+  print "ASDASDASDADASDADASDADSADADASDADSAD"
   print mutated
-
-  --print (eliteSelection (mutated ++ selected ++ mutated) 6 aaa sEnd)
-  print (randomSelection [[allele i] | i  <- [1..10]] 6 aaaa sEnd)
-
-  print (rouletteSelection [[allele i] | i  <- [1..10] ++ [1..5] ++ [1..5]] 6 aaaa sEnd)
+  let crossed2 = cross cross1point s2 mutated
+  print crossed2
+  let crossed3 = cross cross2point s2 mutated
+  print crossed3
+  let crossed4 = cross anularCross s2 mutated
+  print crossed4
+  let crossed5 = cross uniformCross s2 mutated
+  print crossed5
+  print "ASDASDASDADASDADASDADSADADASDADSAD"
 
   let resultPop = ga 500 (const False) (nextGen eliteSelection 4 cross1point mutateChromosome replaceOld eliteSelection multipleInt) seedPop
   print resultPop

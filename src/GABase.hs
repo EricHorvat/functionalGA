@@ -42,7 +42,8 @@ doubleValueAllele :: [Allele]
 doubleValueAllele = [A 0 , A 0 ]
 
 fifValueAllele :: [Allele]
-fifValueAllele = [A 0 , A 0 , A 0 , A 0 , A 0 , A 0 , A 0 , A 0 , A 0 , A 0 , A 0 , A 0 , A 0 , A 0 , A 0]
+--fifValueAllele = [A 0 , A 0 , A 0 , A 0 , A 0 , A 0 , A 0 , A 0 , A 0 , A 0 , A 0 , A 0 , A 0 , A 0 , A 0]
+fifValueAllele = [A 0 , A 0 , A 0 , A 0 , A 0 , A 0]
 
 type Chromosome = [Allele]
 

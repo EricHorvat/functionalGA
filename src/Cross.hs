@@ -46,7 +46,7 @@ anularCross seed c1 c2 =  if r + l >= length c1
 uniformCross :: CrossMethod
 uniformCross seed c1 c2 = [[if booleans!!i then c1!!i else c2!!i | i <- [0..length c1 - 1]],
                           [if booleans!!i then c2!!i else c1!!i | i <- [0..length c2 - 1]]] where
-  booleans = map (> 0) (fst (randDoubles seed (length c1)))
+  booleans = map (> 0.5) (fst (randDoubles seed (length c1)))
 
 type CrossMethod = Seed -> Chromosome -> Chromosome -> [Chromosome]
 
