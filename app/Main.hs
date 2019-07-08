@@ -54,12 +54,13 @@ main = do
   print (rankingSelection [[allele i] | i  <- [1..10] ++ [1..5] ++ [1..5]] 6 aaaa s1)
   print (rankingSelection [[allele i] | i  <- [1..10] ++ [8..10] ++ [9..11]] 6 aaaa sEnd)
 
-  print (universalSelection [[allele i] | i  <- [1..10] ++ [1..5] ++ [1..5]] 6 aaaa sEnd)
-  print (randDouble sEnd)
-  print (universalSelection [[allele i] | i  <- [1..10] ++ [1..5] ++ [1..5]] 6 aaaa s1)
-  print (randDouble s1)
-  print (universalSelection [[allele i] | i  <- [1..10] ++ [8..10] ++ [9..11]] 6 aaaa s4)
-  print (randDouble s4)
+  print (tournamentStochasticSelection [[allele i] | i  <- [1..10] ++ [1..5] ++ [1..5]] 6 aaaa sEnd)
+  print (tournamentStochasticSelection [[allele i] | i  <- [1..10] ++ [1..5] ++ [1..5]] 6 aaaa s1)
+  print (tournamentStochasticSelection [[allele i] | i  <- [1..10] ++ [8..10] ++ [9..11]] 6 aaaa sEnd)
+
+  print (tournamentDeterministicSelection [[allele i] | i  <- [1..10] ++ [1..5] ++ [1..5]] 6 aaaa sEnd)
+  print (tournamentDeterministicSelection [[allele i] | i  <- [1..10] ++ [1..5] ++ [1..5]] 6 aaaa s1)
+  print (tournamentDeterministicSelection [[allele i] | i  <- [1..10] ++ [8..10] ++ [9..11]] 6 aaaa sEnd)
 
 
 -- mutateAllele seed (C i) = C (head (fst (randInts seed 5)) `mod` 2 == 0)

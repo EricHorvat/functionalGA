@@ -5,7 +5,9 @@ module Selection (
   randomSelection,
   rouletteSelection,
   rankingSelection,
-  universalSelection
+  universalSelection,
+  tournamentDeterministicSelection,
+  tournamentStochasticSelection
 )where
 
 import Data.Ord
@@ -75,8 +77,18 @@ rankingSelection pop k fitness seed = [pieOrderSubselect pop total (selectRands!
                                         total = fromIntegral ( (popSize + 1) * popSize) / 2.0
                                         alterPop = sortOn fitness pop
 
---select f n (p,s) = ([select_1 f p t ( fromInteger (rs!!i) ) | i<-[0..n-1]] , s1) where
---  (s1:s2:_) = randSeeds s
---  rs = [r `mod` 100 | r <- randIntegers s2]
---  t = sum (map f p) -- total fitness
-  -- find an item for which the cumulative fitness exceeds r
+chromosomeBattle :: Bool -> [Chromosome] -> FitnessFunction -> Seed -> Chromosome
+chromosomeBattle isStatistic chromosomes fitness seed = if isStatistic && randDouble seed < 0.2
+                                                        then head (sortOn fitness chromosomes)
+                                                        else head (sortOn (Data.Ord.Down . fitness) chromosomes)
+
+
+tournamentSelection :: Bool -> SelectionMethod
+tournamentSelection isStochastic pop k fitness seed = [ chromosomeBattle isStochastic (rankingSelection pop 2 fitness (seeds!!(i*2))) fitness (seeds!!(1+i*2))| i <- [0..(k-1)]] where
+  seeds = randSeeds seed (k*2)
+
+tournamentDeterministicSelection :: SelectionMethod
+tournamentDeterministicSelection = tournamentSelection False
+
+tournamentStochasticSelection :: SelectionMethod
+tournamentStochasticSelection  = tournamentSelection True
