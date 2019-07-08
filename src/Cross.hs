@@ -50,9 +50,11 @@ uniformCross seed c1 c2 = [[if booleans!!i then c1!!i else c2!!i | i <- [0..leng
 
 type CrossMethod = Seed -> Chromosome -> Chromosome -> [Chromosome]
 
-cross :: CrossMethod -> Seed -> [Chromosome] -> [Chromosome]
-cross cross_method seed [] = []
-cross cross_method seed [chromosome] = error "Crossing odd number of chromosomes"
-cross cross_method seed (chromosomeA:chromosomeB:chromosomes) =
-  cross_method seed1 chromosomeA chromosomeB ++
-  cross cross_method seed2 chromosomes where [seed1, seed2] = randSeeds seed 2
+cross :: CrossMethod -> Seed -> Double -> [Chromosome] -> [Chromosome]
+cross cross_method seed pCross [] = []
+cross cross_method seed pCross [chromosome] = error "Crossing odd number of chromosomes"
+cross cross_method seed pCross (chromosomeA:chromosomeB:chromosomes) =
+  (if randDouble seed3 > pCross
+  then cross_method seed1 chromosomeA chromosomeB
+  else [chromosomeA,chromosomeB] ) ++
+  cross cross_method seed2 pCross chromosomes where [seed1, seed2, seed3] = randSeeds seed 3

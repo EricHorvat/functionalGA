@@ -3,6 +3,7 @@ module Random (
   randSeeds,
   randInts,
   randInt,
+  randBoundedInt,
   randDoubles,
   randDouble
   ) where
@@ -20,6 +21,9 @@ randInts = randList
 
 randInt :: StdGen -> Int
 randInt g = fst (random g)
+
+randBoundedInt :: StdGen -> Int -> Int -> Int
+randBoundedInt g min max = fst (randomR (min,max) g)
 
 randDouble :: StdGen -> Double
 randDouble g = fst (random g)
