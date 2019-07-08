@@ -12,7 +12,8 @@ onlyValueAllele,
 value,
 allele,
 alleleIntValue,
-doubleValueAllele
+doubleValueAllele,
+fifValueAllele
 ) where
 
 import Random
@@ -39,6 +40,9 @@ onlyValueAllele = [C False]
 
 doubleValueAllele :: [Allele]
 doubleValueAllele = [A 0 , A 0 ]
+
+fifValueAllele :: [Allele]
+fifValueAllele = [A 0 , A 0 , A 0 , A 0 , A 0 , A 0 , A 0 , A 0 , A 0 , A 0 , A 0 , A 0 , A 0 , A 0 , A 0]
 
 type Chromosome = [Allele]
 

@@ -1,7 +1,10 @@
 module Cross (
   CrossMethod,
   cross,
-  cross1point
+  cross1point,
+  cross2point,
+  anularCross,
+  uniformCross
 )where
 
 import Random
@@ -18,8 +21,32 @@ import GABase
 cross1pointMethod :: Int -> Chromosome -> Chromosome -> [Chromosome]
 cross1pointMethod i c1 c2 = (take i c1 ++ drop i c2) : [take i c2 ++ drop i c1]
 
+cross2pointMethod :: Int -> Int -> Chromosome -> Chromosome -> [Chromosome]
+cross2pointMethod r1 r2 c1 c2 = cross1pointMethod r1 (head partial) (partial!!1) where
+  partial = cross1pointMethod r2 c1 c2
+
 cross1point :: CrossMethod
 cross1point seed = cross1pointMethod ri where (ri:_) = fst (randInts seed 1)
+
+cross2point :: CrossMethod
+cross2point seed c1 c2 = cross1pointMethod r1 (head partial) (partial!!1) where
+  (r1:r2:_) = fst (randInts seed 2)
+  partial = cross1pointMethod r2 c1 c2
+
+anularCross :: CrossMethod
+anularCross seed c1 c2 =  if r + l >= length c1
+                          then resultrl
+                          else cross2pointMethod r (r+l) c1 c2
+                          where
+  (r:l:_) = fst (randInts seed 2)
+  partial0 = cross1pointMethod 0 c1 c2
+  partialrl = cross1pointMethod (r + l - length c1) (head partial0) (partial0!!1)
+  resultrl = cross1pointMethod r (head partialrl) (partialrl!!1)
+
+uniformCross :: CrossMethod
+uniformCross seed c1 c2 = [[if booleans!!i then c1!!i else c2!!i | i <- [0..length c1 - 1]],
+                          [if booleans!!i then c2!!i else c1!!i | i <- [0..length c2 - 1]]] where
+  booleans = map (> 0) (fst (randDoubles seed (length c1)))
 
 type CrossMethod = Seed -> Chromosome -> Chromosome -> [Chromosome]
 
