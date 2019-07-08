@@ -2,7 +2,9 @@ module Random (
   Seed,
   randSeeds,
   randInts,
-  randInt
+  randInt,
+  randDoubles,
+  randDouble
   ) where
 
 import System.Random
@@ -18,6 +20,10 @@ randInts = randList
 
 randInt :: StdGen -> Int
 randInt g = fst (random g)
+
+randDouble :: StdGen -> Double
+randDouble g = fst (random g)
+
 
 randDoubles :: StdGen -> Int -> ([Double], StdGen)
 randDoubles = randList

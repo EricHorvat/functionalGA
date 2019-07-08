@@ -26,15 +26,6 @@ doubleInt chr = alleleIntValue (head chr) + alleleIntValue (head (tail chr))
 main = do
   stdGen <- newStdGen
   let seedPop = initialPopulation (const doubleValueAllele) stdGen 50
-  print stdGen
-  print (randInts stdGen 6)
-  print (randInts (snd (randInts stdGen 6)) 6)
-  print (split stdGen )
-  --print (randSeeds stdGen)
-  print (randInts stdGen 6)
-  print (fst (randInts stdGen 6))
-  print (map (\x -> x `mod` 2) (fst (randInts stdGen 6)))
-  print (map (\x -> x `mod` 2 == 0 ) (fst (randInts stdGen 6)))
 
   let (s1:s2:s3:s4:sEnd:_) = randSeeds (snd seedPop) 5
   let selected = eliteSelection (fst seedPop) 6 (const 1) s1
@@ -47,11 +38,28 @@ main = do
 
   --print (eliteSelection (mutated ++ selected ++ mutated) 6 aaa sEnd)
   print (randomSelection [[allele i] | i  <- [1..10]] 6 aaaa sEnd)
-  print (eliteSelection [[allele i] | i  <- [1..10]] 6 aaaa sEnd)
+
+  print (rouletteSelection [[allele i] | i  <- [1..10] ++ [1..5] ++ [1..5]] 6 aaaa sEnd)
 
   let resultPop = ga 500 (const False) (nextGen eliteSelection 4 cross1point mutateChromosome replaceOld eliteSelection doubleInt) seedPop
   print resultPop
   print (randomSelection resultPop 25 doubleInt sEnd)
+  print (rouletteSelection resultPop 25 doubleInt sEnd)
+
+  print (rouletteSelection [[allele i] | i  <- [1..10] ++ [1..5] ++ [1..5]] 6 aaaa sEnd)
+  print (rouletteSelection [[allele i] | i  <- [1..10] ++ [1..5] ++ [1..5]] 6 aaaa s1)
+  print (rouletteSelection [[allele i] | i  <- [1..10] ++ [8..10] ++ [9..11]] 6 aaaa sEnd)
+
+  print (rankingSelection [[allele i] | i  <- [1..10] ++ [1..5] ++ [1..5]] 6 aaaa sEnd)
+  print (rankingSelection [[allele i] | i  <- [1..10] ++ [1..5] ++ [1..5]] 6 aaaa s1)
+  print (rankingSelection [[allele i] | i  <- [1..10] ++ [8..10] ++ [9..11]] 6 aaaa sEnd)
+
+  print (universalSelection [[allele i] | i  <- [1..10] ++ [1..5] ++ [1..5]] 6 aaaa sEnd)
+  print (randDouble sEnd)
+  print (universalSelection [[allele i] | i  <- [1..10] ++ [1..5] ++ [1..5]] 6 aaaa s1)
+  print (randDouble s1)
+  print (universalSelection [[allele i] | i  <- [1..10] ++ [8..10] ++ [9..11]] 6 aaaa s4)
+  print (randDouble s4)
 
 
 -- mutateAllele seed (C i) = C (head (fst (randInts seed 5)) `mod` 2 == 0)
