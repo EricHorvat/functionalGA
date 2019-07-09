@@ -11,7 +11,8 @@ import Cross
 import Mutation
 import Replace
 
-type FullNextGenerationFunction = SelectionMethod -> Int -> CrossMethod -> Double -> MutateMethod -> Double -> ReplaceMethod -> SelectionMethod -> FitnessFunction -> NextGenerationFunction
+type NextGenerationFunctionGenerator = SelectionMethod -> Int -> CrossMethod -> Double ->
+  MutateMethod -> Double -> ReplaceMethod -> SelectionMethod -> FitnessFunction -> NextGenerationFunction
 type NextGenerationFunction = SeededPopulation -> SeededPopulation
 
 ga :: Int -> EndCheckFunction -> NextGenerationFunction -> SeededPopulation -> Population
@@ -22,7 +23,7 @@ ga iterations endCheck nextGen (pop,s) | iterations==0 = pop
 initialPopulation :: ChromosomeGenerator -> Seed -> Int -> SeededPopulation
 initialPopulation chromosomeGenerator seed popSize = ([chromosomeGenerator (rs!!i) | i<-[1..popSize]], head rs) where rs = randSeeds seed (popSize + 1)
 
-nextGen :: FullNextGenerationFunction
+nextGen :: NextGenerationFunctionGenerator
 nextGen selectMethod k crossMethod pCross mutateMethod pMutation replaceMethod selectMethod4replace fitness (population, seed) =
   (replaceMethod population mutated s4 selectMethod4replace fitness, sEnd) where
     mutated = mutate mutateMethod s3 pMutation crossed

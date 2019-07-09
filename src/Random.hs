@@ -16,9 +16,6 @@ randSeeds :: StdGen -> Int -> [StdGen]
 randSeeds g 0 = []
 randSeeds g i = randSeeds (snd (split g)) (i-1) ++ [fst (split g)]
 
-randInts :: StdGen -> Int -> ([Int], StdGen)
-randInts = randList
-
 randInt :: StdGen -> Int
 randInt g = fst (random g)
 
@@ -28,21 +25,17 @@ randBoundedInt g min max = fst (randomR (min,max) g)
 randDouble :: StdGen -> Double
 randDouble g = fst (random g)
 
-
-randDoubles :: StdGen -> Int -> ([Double], StdGen)
-randDoubles = randList
-
 randList :: Random a => StdGen -> Int -> ([a], StdGen)
 randList g 0 = ([], g)
 randList g i = (fst randApplied : fst prev, snd prev) where
   prev = randList (snd randApplied) (i-1)
   randApplied = random g
 
-randBoundedList :: (Random a , Bounded a) => StdGen -> a -> a -> Int -> ([a], StdGen)
-randBoundedList g min max 0 = ([], g)
-randBoundedList g min max i = (fst randApplied : fst prev, snd prev) where
-  prev = randBoundedList (snd randApplied) min max (i-1)
-  randApplied = randomR (min, max) g
+randInts :: StdGen -> Int -> ([Int], StdGen)
+randInts = randList
+
+randDoubles :: StdGen -> Int -> ([Double], StdGen)
+randDoubles = randList
 
 --randIntegers :: StdGen -> [Integer]
 --randIntegers = randoms

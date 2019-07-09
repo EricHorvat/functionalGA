@@ -21,6 +21,18 @@ import System.Random
 
 data Allele = A Int | B String | C Bool deriving Show
 
+type Chromosome = [Allele]
+
+type Population = [Chromosome]
+
+type SeededPopulation = (Population , Seed)
+
+type FitnessFunction = Chromosome -> Int
+
+type ChromosomeGenerator = Seed -> Chromosome
+
+type EndCheckFunction = Population -> Bool
+
 mutateAllele :: Seed -> Allele -> Allele
 mutateAllele seed (A i) = A (head (randomRs (-1500,1500) seed))
 mutateAllele seed (B i) = B " "
@@ -44,15 +56,3 @@ doubleValueAllele = [A 0 , A 0 ]
 fifValueAllele :: [Allele]
 --fifValueAllele = [A 0 , A 0 , A 0 , A 0 , A 0 , A 0 , A 0 , A 0 , A 0 , A 0 , A 0 , A 0 , A 0 , A 0 , A 0]
 fifValueAllele = [A 0 , A 0 , A 0 , A 0 , A 0 , A 0]
-
-type Chromosome = [Allele]
-
-type Population = [Chromosome]
-
-type SeededPopulation = ([Chromosome] , Seed)
-
-type FitnessFunction = Chromosome -> Int
-
-type ChromosomeGenerator = Seed -> Chromosome
-
-type EndCheckFunction = Population -> Bool
