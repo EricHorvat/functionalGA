@@ -32,25 +32,26 @@ eliteSelection :: SelectionMethod
 eliteSelection pop k fitness seed = take k (sortOn (Data.Ord.Down . fitness) pop ) --HLINT https://github.com/ndmitchell/hlint/blob/master/data/hlint.yaml
 
 randomSelection :: SelectionMethod
-randomSelection pop k fitness seed = take k (map snd (sortOn (Data.Ord.Down . fst) [(selectRands!!i, pop!!i) | i <- [0..(popSize-1)]])) where
+randomSelection pop k fitness seed = take k (map snd (sortOn (Data.Ord.Down . fst) seededPop)) where
   selectRands = fst (randInts seed popSize)
   popSize = length pop
+  seededPop = zip selectRands pop
 
 rouletteSelection :: SelectionMethod
-rouletteSelection pop k fitness seed = [pieFitnessSubselect fitness pop total (selectRands!!i) | i <- [0..(k-1)]] where
+rouletteSelection pop k fitness seed = map (pieFitnessSubselect fitness pop total) selectRands where
   selectRands = fst (randDoubles seed k)
   popSize = length pop
   total = fromIntegral (sum (map fitness pop))
 
 universalSelection :: SelectionMethod
-universalSelection pop k fitness seed = [pieFitnessSubselect fitness pop total (selectedFitness i k) | i <- [0..(k-1)]] where
+universalSelection pop k fitness seed = map (pieFitnessSubselect fitness pop total . selectedFitness) [0..(k-1)] where
   selectedRand = randDouble seed
   popSize = length pop
   total = fromIntegral (sum (map fitness pop))
-  unfilteredSelectedFitness i k = selectedRand + fromIntegral (i - 1) / fromIntegral k
-  selectedFitness i k = if unfilteredSelectedFitness i k <= 1
-                            then unfilteredSelectedFitness i k
-                            else unfilteredSelectedFitness i k - 1
+  unfilteredSelectedFitness i = selectedRand + fromIntegral (i - 1) / fromIntegral k
+  selectedFitness i = if unfilteredSelectedFitness i <= 1
+                            then unfilteredSelectedFitness i
+                            else unfilteredSelectedFitness i - 1
 
 pieFitnessSubselect :: FitnessFunction -> Population -> Double -> Double -> Chromosome
 pieFitnessSubselect fitness pop 0 r = error "fitness should never be 0"
@@ -71,7 +72,7 @@ pieOrderSubselect pop t r = orderSelection 0 1 pop where
         else orderSelection (summary+relFitness) (order+1) chromosomes
 
 rankingSelection :: SelectionMethod
-rankingSelection pop k fitness seed = [pieOrderSubselect pop total (selectRands!!i) | i <- [0..(k-1)]] where
+rankingSelection pop k fitness seed = map (pieOrderSubselect pop total) selectRands where
                                         selectRands = fst (randDoubles seed k)
                                         popSize = length pop
                                         total = fromIntegral ( (popSize + 1) * popSize) / 2.0
@@ -84,8 +85,10 @@ chromosomeBattle isStatistic chromosomes fitness seed = if isStatistic && randDo
 
 
 tournamentSelection :: Bool -> SelectionMethod
-tournamentSelection isStochastic pop k fitness seed = [ chromosomeBattle isStochastic (rankingSelection pop 2 fitness (seeds!!(i*2))) fitness (seeds!!(1+i*2))| i <- [0..(k-1)]] where
-  seeds = randSeeds seed (k*2)
+tournamentSelection isStochastic pop k fitness seed = map battle tupledSeeds where
+  battle (seed1,seed2) = chromosomeBattle isStochastic (rankingSelection pop 2 fitness seed1) fitness seed2
+  allSeeds = randSeeds seed (k*2)
+  tupledSeeds = zip (take k allSeeds) (drop k allSeeds)
 
 tournamentDeterministicSelection :: SelectionMethod
 tournamentDeterministicSelection = tournamentSelection False

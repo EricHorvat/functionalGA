@@ -7,29 +7,29 @@ module Mutation (
 import Random
 import GABase
 
---mutate mutOp (p,s) = ([mutOp chrom (rs!!i) | (i,chrom)<- zip [1..] p],rs!!0) where rs = randSeeds s (length p)
+type MutateMethod = Double -> Seed -> Chromosome -> Chromosome
 
-type MutateMethod = Seed -> Double -> Chromosome -> Chromosome
+mutateWithProbability pMutation allele seed1 seed2 = if pMutation > randDouble seed1
+                                                         then mutateAllele seed2 allele
+                                                         else allele
 
 mutateMultiGenChromosome :: MutateMethod
-mutateMultiGenChromosome seed pMutation chromosome =
-  [if pMutation > randDouble (mutateRands!!(i*2))
-   then mutateAllele (mutateRands!!((i * 2) + 1)) (chromosome!!i)
-   else chromosome!!i | i <- [0..(k-1)]] where
+mutateMultiGenChromosome pMutation seed chromosome = map (uncurry(uncurry(mutateWithProbability pMutation))) chromosomeAndSeedTuple where
     mutateRands = randSeeds seed (k * 2)
     k = length chromosome
+    chromosomeAndSeedTuple = zip (zip chromosome (take k mutateRands)) (drop k mutateRands)
 
 mutateGenChromosome :: MutateMethod
-mutateGenChromosome seed pMutation chromosome =
+mutateGenChromosome pMutation seed chromosome =
   if pMutation > randDouble seed1
-  then [if i == index then mutateAllele seed2 (chromosome!!i) else chromosome!!i | i <- [0..(k - 1)]]
+  then take index chromosome ++ mutateAllele seed2 (chromosome!!index) : drop (index + 1) chromosome
   else chromosome where
     (seed1:seed2:seed3:_) = randSeeds seed 3
     index = randBoundedInt seed3 0 (k - 1)
     k = length chromosome
 
-mutate :: MutateMethod -> Seed -> Double -> [Chromosome] -> [Chromosome]
-mutate mutateMethod seed pMutation chromosomes =
-  [mutateMethod (mutateRands!!i) pMutation (chromosomes!!i) | i <- [0..(k-1)]] where
+mutate :: MutateMethod -> Double -> Seed -> [Chromosome] -> [Chromosome]
+mutate mutateMethod pMutation seed chromosomes = map (uncurry (mutateMethod pMutation)) chromosomesSeedTuple where
     mutateRands = randSeeds seed k
+    chromosomesSeedTuple = zip mutateRands chromosomes
     k = length chromosomes

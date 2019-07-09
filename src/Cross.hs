@@ -18,18 +18,18 @@ import GABase
 --    cr (r3:rs3) (r4:rs4) (i1:i2:r)  | r3 > pCross = i1:i2: cr rs3 rs4 r
 --                                    | otherwise = cross r4 i1 i2 ++ cr rs3 rs4 r
 
-cross1pointMethod :: Int -> Chromosome -> Chromosome -> [Chromosome]
-cross1pointMethod i c1 c2 = (take i c1 ++ drop i c2) : [take i c2 ++ drop i c1]
+cross1pointMethod :: Int -> Chromosome -> Chromosome -> (Chromosome,Chromosome)
+cross1pointMethod i c1 c2 = (take i c1 ++ drop i c2, take i c2 ++ drop i c1)
 
-cross2pointMethod :: Int -> Int -> Chromosome -> Chromosome -> [Chromosome]
-cross2pointMethod r1 r2 c1 c2 = cross1pointMethod r1 (head partial) (partial!!1) where
+cross2pointMethod :: Int -> Int -> Chromosome -> Chromosome -> (Chromosome,Chromosome)
+cross2pointMethod r1 r2 c1 c2 = uncurry (cross1pointMethod r1) partial where
   partial = cross1pointMethod r2 c1 c2
 
 cross1point :: CrossMethod
-cross1point seed = cross1pointMethod ri where (ri:_) = fst (randInts seed 1)
+cross1point seed = cross1pointMethod (randInt seed)
 
 cross2point :: CrossMethod
-cross2point seed c1 c2 = cross1pointMethod r1 (head partial) (partial!!1) where
+cross2point seed c1 c2 = uncurry (cross1pointMethod r1) partial where
   (r1:r2:_) = fst (randInts seed 2)
   partial = cross1pointMethod r2 c1 c2
 
@@ -40,21 +40,27 @@ anularCross seed c1 c2 =  if r + l >= length c1
                           where
   (r:l:_) = fst (randInts seed 2)
   partial0 = cross1pointMethod 0 c1 c2
-  partialrl = cross1pointMethod (r + l - length c1) (head partial0) (partial0!!1)
-  resultrl = cross1pointMethod r (head partialrl) (partialrl!!1)
+  partialrl = uncurry (cross1pointMethod (r + l - length c1)) partial0
+  resultrl = uncurry (cross1pointMethod r) partialrl
+
+uniformAlleleCross boolean a1 a2 = if boolean then a1 else a2
 
 uniformCross :: CrossMethod
-uniformCross seed c1 c2 = [[if booleans!!i then c1!!i else c2!!i | i <- [0..length c1 - 1]],
-                          [if booleans!!i then c2!!i else c1!!i | i <- [0..length c2 - 1]]] where
+uniformCross seed c1 c2 = (map (uncurry (uncurry uniformAlleleCross)) boolAllelesTuple1,
+                           map (uncurry (uncurry uniformAlleleCross)) boolAllelesTuple2) where
   booleans = map (> 0.5) (fst (randDoubles seed (length c1)))
+  boolAllelesTuple1 = zip (zip booleans c1) c2
+  boolAllelesTuple2 = zip (zip booleans c2) c1
 
-type CrossMethod = Seed -> Chromosome -> Chromosome -> [Chromosome]
+type CrossMethod = Seed -> Chromosome -> Chromosome -> (Chromosome,Chromosome)
 
 cross :: CrossMethod -> Seed -> Double -> [Chromosome] -> [Chromosome]
 cross cross_method seed pCross [] = []
 cross cross_method seed pCross [chromosome] = error "Crossing odd number of chromosomes"
 cross cross_method seed pCross (chromosomeA:chromosomeB:chromosomes) =
   (if randDouble seed3 > pCross
-  then cross_method seed1 chromosomeA chromosomeB
+  then [resultChromosomeA,resultChromosomeB]
   else [chromosomeA,chromosomeB] ) ++
-  cross cross_method seed2 pCross chromosomes where [seed1, seed2, seed3] = randSeeds seed 3
+  cross cross_method seed2 pCross chromosomes where
+    [seed1, seed2, seed3] = randSeeds seed 3
+    (resultChromosomeA, resultChromosomeB) = cross_method seed1 chromosomeA chromosomeB
