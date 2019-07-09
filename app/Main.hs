@@ -25,3 +25,4 @@ main = do
   print (randomSelection resultPop 25 multipleInt sEnd)
   print (rouletteSelection resultPop 25 multipleInt sEnd)
 
+  print (randSeeds s1 5)

@@ -13,8 +13,7 @@ import System.Random
 type Seed = StdGen
 
 randSeeds :: StdGen -> Int -> [StdGen]
-randSeeds g 0 = []
-randSeeds g i = randSeeds (snd (split g)) (i-1) ++ [fst (split g)]
+randSeeds g i = snd (foldr (\x (y,z) -> (snd (split y), fst (split y) : z)) (g,[]) [1..i])
 
 randInt :: StdGen -> Int
 randInt g = fst (random g)
@@ -26,10 +25,7 @@ randDouble :: StdGen -> Double
 randDouble g = fst (random g)
 
 randList :: Random a => StdGen -> Int -> ([a], StdGen)
-randList g 0 = ([], g)
-randList g i = (fst randApplied : fst prev, snd prev) where
-  prev = randList (snd randApplied) (i-1)
-  randApplied = random g
+randList g i = foldr (\x (y,z) -> (fst (random z) : y, snd (next z))) ([fst (random g)], snd (next g)) [1..i]
 
 randInts :: StdGen -> Int -> ([Int], StdGen)
 randInts = randList

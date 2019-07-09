@@ -35,6 +35,7 @@ anularCross seed c1 c2 =  if r + l >= length c1
   partialrl = uncurry (cross1pointMethod (r + l - length c1)) partial0
   resultrl = uncurry (cross1pointMethod r) partialrl
 
+uniformAlleleCross :: Bool -> Allele -> Allele -> Allele
 uniformAlleleCross boolean a1 a2 = if boolean then a1 else a2
 
 uniformCross :: CrossMethod
