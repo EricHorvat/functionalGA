@@ -2,7 +2,7 @@ module Mutation (
   mutate,
   MutateMethod,
   mutateMultiGenChromosome
-)where
+  ) where
 
 import Random
 import GABase

@@ -1,5 +1,4 @@
 module Selection (
-  --select,
   SelectionMethod,
   eliteSelection,
   randomSelection,
@@ -8,7 +7,7 @@ module Selection (
   universalSelection,
   tournamentDeterministicSelection,
   tournamentStochasticSelection
-)where
+  ) where
 
 import Data.Ord
 import Data.Sort
@@ -16,15 +15,6 @@ import System.Random
 
 import Random
 import GABase
-import Utils
-
--- eliteSelection ; sort then take first k elems DONE
--- roulette ; upper ^ DONE
--- ranking ; inverse sort, as roulette where total_fitness = (n + 1) * n / 2 -- see even DONE
--- tournament deterministic; select random 2; compare
--- tournament stochastic; select random 2; invert compare with if
--- universal ; see with detail, should be base in roulette DONE
--- boltzmann ; if active, its a f to the fitness
 
 type SelectionMethod = Population -> Int -> FitnessFunction -> Seed -> [Chromosome]
 

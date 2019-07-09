@@ -1,8 +1,8 @@
 module GA (
-initialPopulation,
-ga,
-nextGen
-)where
+  initialPopulation,
+  ga,
+  nextGen
+  ) where
 
 import GABase
 import Random

@@ -1,15 +1,11 @@
 module Main where
 
-import Lib
 import GA
 import GABase
 import Selection
 import Cross
 import Mutation
 import Replace
-
-
-
 
 import Random
 import System.Random

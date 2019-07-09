@@ -2,7 +2,7 @@ module Replace (
   ReplaceMethod,
   replaceOld,
   replaceNewOld
-)where
+  ) where
 
 import GABase
 import Selection

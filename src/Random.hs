@@ -36,12 +36,3 @@ randInts = randList
 
 randDoubles :: StdGen -> Int -> ([Double], StdGen)
 randDoubles = randList
-
---randIntegers :: StdGen -> [Integer]
---randIntegers = randoms
-
---randIntegers :: StdGen -> Integer -> Integer -> [Integer] --generate random ints
---randIntegers g min max = randomRs (min, max) g
-
---randDoubles :: StdGen -> Double -> Double -> [Double] --generate random ints
---randDoubles g min max = randomRs (min, max) g
