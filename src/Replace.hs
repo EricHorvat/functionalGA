@@ -9,12 +9,9 @@ import Selection
 
 type ReplaceMethod = Population -> [Chromosome] -> Seed -> SelectionMethod -> FitnessFunction -> Population
 
-basicReplace :: ReplaceMethod
-basicReplace pop chromosomes seed select_method fitness =
-  select_method pop (length pop - length chromosomes) fitness seed ++ chromosomes
-
 replaceOld :: ReplaceMethod
-replaceOld = basicReplace
+replaceOld pop chromosomes seed select_method fitness =
+  select_method pop (length pop - length chromosomes) fitness seed ++ chromosomes
 
 replaceNewOld :: ReplaceMethod
 replaceNewOld pop chromosomes seed select_method fitness =

@@ -25,8 +25,8 @@ mutateGenChromosome pMutation seed chromosome =
   then take index chromosome ++ mutateAllele seed2 (chromosome!!index) : drop (index + 1) chromosome
   else chromosome where
     (seed1:seed2:seed3:_) = randSeeds seed 3
-    index = randBoundedInt seed3 0 (k - 1)
     k = length chromosome
+    index = randBoundedInt seed3 0 (k - 1)
 
 mutate :: MutateMethod -> Double -> Seed -> [Chromosome] -> [Chromosome]
 mutate mutateMethod pMutation seed chromosomes = map (uncurry (mutateMethod pMutation)) chromosomesSeedTuple where

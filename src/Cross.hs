@@ -10,15 +10,9 @@ module Cross (
 import Random
 import GABase
 
-cross1pointMethod :: Int -> Chromosome -> Chromosome -> (Chromosome,Chromosome)
-cross1pointMethod i c1 c2 = (take i c1 ++ drop i c2, take i c2 ++ drop i c1)
-
 cross2pointMethod :: Int -> Int -> Chromosome -> Chromosome -> (Chromosome,Chromosome)
 cross2pointMethod r1 r2 c1 c2 = uncurry (cross1pointMethod r1) partial where
   partial = cross1pointMethod r2 c1 c2
-
-cross1point :: CrossMethod
-cross1point seed = cross1pointMethod (randInt seed)
 
 cross2point :: CrossMethod
 cross2point seed c1 c2 = uncurry (cross1pointMethod r1) partial where
@@ -34,6 +28,12 @@ anularCross seed c1 c2 =  if r + l >= length c1
   partial0 = cross1pointMethod 0 c1 c2
   partialrl = uncurry (cross1pointMethod (r + l - length c1)) partial0
   resultrl = uncurry (cross1pointMethod r) partialrl
+
+cross1pointMethod :: Int -> Chromosome -> Chromosome -> (Chromosome,Chromosome)
+cross1pointMethod i c1 c2 = (take i c1 ++ drop i c2, take i c2 ++ drop i c1)
+
+cross1point :: CrossMethod
+cross1point seed = cross1pointMethod (randInt seed)
 
 uniformAlleleCross :: Bool -> Allele -> Allele -> Allele
 uniformAlleleCross boolean a1 a2 = if boolean then a1 else a2

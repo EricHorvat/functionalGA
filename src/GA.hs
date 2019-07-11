@@ -16,12 +16,13 @@ type NextGenerationFunctionGenerator = SelectionMethod -> Int -> CrossMethod -> 
 type NextGenerationFunction = SeededPopulation -> SeededPopulation
 
 ga :: Int -> EndCheckFunction -> NextGenerationFunction -> SeededPopulation -> Population
-ga iterations endCheck nextGen (pop,s) | iterations==0 = pop
+ga iterations endCheck nextGenF (pop,seed) | iterations==0 = pop
                                        | endCheck pop = pop
-                                       | otherwise = ga (iterations - 1) endCheck nextGen (nextGen (pop,s))
+                                       | otherwise = ga (iterations - 1) endCheck nextGenF (nextGenF (pop,seed))
 
 initialPopulation :: ChromosomeGenerator -> Seed -> Int -> SeededPopulation
-initialPopulation chromosomeGenerator seed popSize = (map chromosomeGenerator (tail rs), head rs) where rs = randSeeds seed (popSize + 1)
+initialPopulation chromosomeGenerator seed popSize = (map chromosomeGenerator (tail seeds), head seeds) where
+  seeds = randSeeds seed (popSize + 1)
 
 nextGen :: NextGenerationFunctionGenerator
 nextGen selectMethod k crossMethod pCross mutateMethod pMutation replaceMethod selectMethod4replace fitness (population, seed) =
