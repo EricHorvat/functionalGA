@@ -1,12 +1,12 @@
 module Selection (
-  SelectionMethod,
   eliteSelection,
   randomSelection,
   rouletteSelection,
   rankingSelection,
   universalSelection,
   tournamentDeterministicSelection,
-  tournamentStochasticSelection
+  tournamentStochasticSelection,
+  multipleSelection
   ) where
 
 import Data.Ord
@@ -15,8 +15,6 @@ import System.Random
 
 import Random
 import GABase
-
-type SelectionMethod = Population -> Int -> FitnessFunction -> Seed -> [Chromosome]
 
 eliteSelection :: SelectionMethod
 eliteSelection pop k fitness _ = take k (sortOn (Data.Ord.Down . fitness) pop )

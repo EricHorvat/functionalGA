@@ -7,8 +7,10 @@ import Cross
 import Mutation
 import Replace
 
-import Random
 import Character
+import GAinGA
+import MathGA
+import Random
 
 import Control.Monad.Trans.State
 import Data.CSV
@@ -17,20 +19,8 @@ import Data.Either
 import System.Random
 import Text.ParserCombinators.Parsec
 
-sumFitness :: FitnessFunction
-sumFitness chr = sum (map alleleValue chr)
-
-polynomialRootFitness :: Double -> FitnessFunction
-polynomialRootFitness value chr = 1 / (1 + abs (sum (
-  zipWith (*)
-    (zipWith (**)
-      (map (const value) [1..length chr])
-      (map fromIntegral [0..(length chr - 1)]))
-    (map alleleValue chr)
-  )))
-
 main :: IO ()
-main = mainCharacter
+main = mainGA
 
 mainCharacter :: IO ()
 mainCharacter = do
@@ -55,15 +45,11 @@ characterGA fileData stdGen = if map lefts [fileData] == [[]]
     resultPop = ga 500 (const False) (nextGen eliteSelection 10 cross1point 0.2 mutateMultiGenChromosome 0.1 replaceOld eliteSelection fitnessF) seedPop
 
 
-main2 :: IO ()
-main2 = do
+mainMath :: IO ()
+mainMath = do
   stdGen <- newStdGen
-  --let fitnessF = polynomialRootFitness 6
   let fitnessF = polynomialRootFitness 6
-
   let chromosomeGenerator = boundedIntChromosomeGenerator 5 (-150,150)
-
-
   let seedPop = initialPopulation chromosomeGenerator stdGen 50
   let (s1:s2:s3:s4:sEnd:_) = randSeeds (snd seedPop) 5
   let resultPop = ga 500 (const False) (nextGen eliteSelection 4 cross1point 0.2 mutateMultiGenChromosome 0.1 replaceOld eliteSelection fitnessF) seedPop
@@ -73,13 +59,14 @@ main2 = do
   print (rouletteSelection resultPop 25 fitnessF sEnd)
 
   print (randSeeds s1 5)
-  --print (evalState allTypes stdGen)
-  --let statessss = execState allTypes stdGen
-  --print (evalState allTypes statessss)
 
-boundedIntChromosomeGenerator :: Int -> (Int,Int) -> ChromosomeGenerator
-boundedIntChromosomeGenerator l bound seed = mutateMultiGenChromosome 1.0 seed (map (const (BoundedInt bound 0)) [1..l])
+mainGA :: IO ()
+mainGA = do
+  stdGen <- newStdGen
+  let seedPop = initialPopulation gaChromosomeGenerator stdGen 5
+  let (s1:s2:s3:s4:sEnd:_) = randSeeds (snd seedPop) 5
+  let resultPop = ga 5 (const False) (nextGen eliteSelection 4 cross1point 0.2 mutateMultiGenChromosome 0.1 replaceOld eliteSelection gaFitness) seedPop
+  print resultPop
 
-characterChromosomeGenerator :: [[[Double]]] -> ChromosomeGenerator
-characterChromosomeGenerator values seed = mutateMultiGenChromosome 1.0 seed ( BoundedDouble (1.3,2.0) 0.0 : map (flip Vestment 0) values)
+
 

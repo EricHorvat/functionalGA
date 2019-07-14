@@ -1,13 +1,10 @@
 module Replace (
-  ReplaceMethod,
   replaceOld,
   replaceNewOld
   ) where
 
 import GABase
 import Selection
-
-type ReplaceMethod = Population -> [Chromosome] -> Seed -> SelectionMethod -> FitnessFunction -> Population
 
 replaceOld :: ReplaceMethod
 replaceOld pop chromosomes seed select_method fitness =

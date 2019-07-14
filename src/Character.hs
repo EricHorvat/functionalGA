@@ -1,8 +1,13 @@
 module Character (
-warriorFitness
+warriorFitness,
+archerFitness,
+keeperFitness,
+assassinFitness,
+characterChromosomeGenerator
 ) where
 
 import GABase
+import Mutation
 
 getItemIndexValue :: Int -> Allele -> Double
 getItemIndexValue itemIndex (Vestment values index) = (values!!index)!!itemIndex
@@ -71,3 +76,6 @@ keeperFitness = characterFitness 0.1 0.9
 
 assassinFitness :: FitnessFunction
 assassinFitness = characterFitness 0.7 0.3
+
+characterChromosomeGenerator :: [[[Double]]] -> ChromosomeGenerator
+characterChromosomeGenerator values seed = mutateFully seed ( BoundedDouble (1.3,2.0) 0.0 : map (flip Vestment 0) values)

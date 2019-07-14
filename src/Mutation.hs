@@ -1,17 +1,19 @@
 module Mutation (
   mutate,
-  MutateMethod,
-  mutateMultiGenChromosome
+  mutateMultiGenChromosome,
+  mutateGenChromosome,
+  mutateFully
   ) where
 
 import Random
 import GABase
 
-type MutateMethod = Double -> Seed -> Chromosome -> Chromosome
-
 mutateWithProbability pMutation allele seed1 seed2 = if pMutation > randDouble seed1
                                                          then mutateAllele seed2 allele
                                                          else allele
+
+mutateFully :: Seed -> Chromosome -> Chromosome
+mutateFully = mutateMultiGenChromosome 1.0
 
 mutateMultiGenChromosome :: MutateMethod
 mutateMultiGenChromosome pMutation seed chromosome = map (uncurry(uncurry(mutateWithProbability pMutation))) chromosomeAndSeedTuple where
