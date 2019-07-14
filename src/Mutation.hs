@@ -26,7 +26,7 @@ mutateGenChromosome pMutation seed chromosome =
   else chromosome where
     (seed1:seed2:seed3:_) = randSeeds seed 3
     k = length chromosome
-    index = randBoundedInt seed3 0 (k - 1)
+    index = randBoundedInt seed3 (0, k - 1)
 
 mutate :: MutateMethod -> Double -> Seed -> [Chromosome] -> [Chromosome]
 mutate mutateMethod pMutation seed chromosomes = map (uncurry (mutateMethod pMutation)) chromosomesSeedTuple where

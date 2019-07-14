@@ -18,8 +18,8 @@ randSeeds g i = snd (foldr (\x (y,z) -> (snd (split y), fst (split y) : z)) (g,[
 randInt :: Seed -> Int
 randInt g = fst (random g)
 
-randBoundedInt :: Seed -> Int -> Int -> Int
-randBoundedInt g min max = fst (randomR (min,max) g)
+randBoundedInt :: Seed -> (Int,Int) -> Int
+randBoundedInt g bound = fst (randomR bound g)
 
 randDouble :: Seed -> Double
 randDouble g = fst (random g)

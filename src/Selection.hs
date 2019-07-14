@@ -32,7 +32,7 @@ pieFitnessSubselect :: FitnessFunction -> Population -> Double -> Double -> Chro
 pieFitnessSubselect fitness pop 0 r = error "fitness should never be 0"
 pieFitnessSubselect fitness pop t r = fitnessSelection 0 pop where
   fitnessSelection summary (chromosome : chromosomes) =
-    let relFitness = fromIntegral (fitness chromosome) / t
+    let relFitness = fitness chromosome / t
       in if (relFitness + summary) > r
         then chromosome
         else fitnessSelection (summary+relFitness) chromosomes
@@ -41,13 +41,13 @@ rouletteSelection :: SelectionMethod
 rouletteSelection pop k fitness seed = map (pieFitnessSubselect fitness pop total) selectRands where
   selectRands = fst (randDoubles seed k)
   popSize = length pop
-  total = fromIntegral (sum (map fitness pop))
+  total = sum (map fitness pop)
 
 universalSelection :: SelectionMethod
 universalSelection pop k fitness seed = map (pieFitnessSubselect fitness pop total . selectedFitness) [0..(k-1)] where
   selectedRand = randDouble seed
   popSize = length pop
-  total = fromIntegral (sum (map fitness pop))
+  total = sum (map fitness pop)
   unfilteredSelectedFitness i = selectedRand + fromIntegral (i - 1) / fromIntegral k
   selectedFitness i = if unfilteredSelectedFitness i <= 1
                             then unfilteredSelectedFitness i
@@ -95,4 +95,4 @@ multipleSelection tuples pop k fitness seed =
 
 
 boltzmann :: Int -> FitnessFunction -> FitnessFunction
-boltzmann iteration fitness chromosome = floor ((1000.0 / fromIntegral iteration + 1.0) * fromIntegral (fitness chromosome) + 1.0)
+boltzmann iteration fitness chromosome = (1000.0 / fromIntegral iteration + 1.0) * fitness chromosome + 1.0

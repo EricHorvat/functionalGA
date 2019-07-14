@@ -4,22 +4,20 @@ module GABase (
   EndCheckFunction,
   Chromosome,
   ChromosomeGenerator,
-  Allele,
   Seed,
   FitnessFunction,
   mutateAllele,
   onlyValueAllele,
-  value,
-  allele,
-  alleleIntValue,
   doubleValueAllele,
-  fifValueAllele
+  fifValueAllele,
+  alleleValue,
+  Allele (BoundedInt, B, C)
   ) where
 
 import Random
 import System.Random
 
-data Allele = A Int | B String | C Bool deriving Show
+data Allele = BoundedInt (Int,Int) Int | B String | C Bool deriving Show
 
 type Chromosome = [Allele]
 
@@ -27,31 +25,27 @@ type Population = [Chromosome]
 
 type SeededPopulation = (Population , Seed)
 
-type FitnessFunction = Chromosome -> Int
+type FitnessFunction = Chromosome -> Double
 
 type ChromosomeGenerator = Seed -> Chromosome
 
 type EndCheckFunction = Population -> Bool
 
 mutateAllele :: Seed -> Allele -> Allele
-mutateAllele seed (A i) = A (head (randomRs (-1500,1500) seed))
+mutateAllele seed (BoundedInt bound i) = BoundedInt bound (head (randomRs bound seed))
 mutateAllele seed (B i) = B " "
 mutateAllele seed (C i) = C (head (fst (randInts seed 5)) `mod` 2 == 0)
 
-value :: Allele -> Bool
-value (C b) = b
-
-allele :: Int -> Allele
-allele = A
-
-alleleIntValue :: Allele -> Int
-alleleIntValue (A v) = v
+alleleValue :: Allele -> Double
+alleleValue (BoundedInt _ v) = fromIntegral v
+alleleValue (B i) = 6
+alleleValue (C b) = 5
 
 onlyValueAllele :: [Allele]
 onlyValueAllele = [C False]
 
 doubleValueAllele :: [Allele]
-doubleValueAllele = [A 0 , A 0 ]
+doubleValueAllele = [BoundedInt (-15,15) 0 , BoundedInt (-15,15) 0 ]
 
 fifValueAllele :: [Allele]
-fifValueAllele = [A 0 , A 0 , A 0 , A 0 , A 0 , A 0]
+fifValueAllele = [BoundedInt (-15,15) 0 , BoundedInt (-15,15) 0 , BoundedInt (-15,15) 0 , BoundedInt (-15,15) 0 , BoundedInt (-15,15) 0 , BoundedInt (-15,15) 0]
