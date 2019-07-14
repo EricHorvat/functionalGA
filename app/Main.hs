@@ -19,8 +19,14 @@ import Data.Either
 import System.Random
 import Text.ParserCombinators.Parsec
 
+import Data.Time
+
 main :: IO ()
-main = mainGA
+main = do
+  start <- getCurrentTime
+  mainGA
+  stop <- getCurrentTime
+  print $ diffUTCTime stop start
 
 mainCharacter :: IO ()
 mainCharacter = do
@@ -68,5 +74,5 @@ mainGA = do
   let resultPop = ga 5 (const False) (nextGen eliteSelection 4 cross1point 0.2 mutateMultiGenChromosome 0.1 replaceOld eliteSelection gaFitness) seedPop
   print resultPop
 
-
-
+--[[2,1,0,87,1,0.7706849894733506,1,0.9827379060664344,1,1,1290238869 84738397,1381],[2,1,0,242,1,0.8269040409161439,1,0.9827379060664344,1,1,1290238869 84738397,2395],[2,1,0,31,1,0.7706849894733506,1,0.9827379060664344,1,1,687239655 66155056,1381],[2,1,0,87,1,0.7706849894733506,1,0.9827379060664344,1,1,1290238869 84738397,1381],[2,0,0,97,0,0.7194222604509124,1,0.3787550245023832,0,1,611369370 1474892912,774]]
+--142.696475326s
