@@ -9,7 +9,7 @@ module Selection (
   multipleSelection
   ) where
 
-import Data.Ord
+import Utils
 import Data.Sort
 import System.Random
 
@@ -17,7 +17,7 @@ import Random
 import GABase
 
 eliteSelection :: SelectionMethod
-eliteSelection pop k fitness _ = take k (sortOn (Data.Ord.Down . fitness) pop )
+eliteSelection pop k fitness _ = take k (rev (sortOn fitness pop ))
 --HLINT https://github.com/ndmitchell/hlint/blob/master/data/hlint.yaml
 
 randomSelection :: SelectionMethod
@@ -70,7 +70,7 @@ rankingSelection pop k fitness seed = map (pieOrderSubselect alterPop total) sel
 chromosomeBattle :: Bool -> [Chromosome] -> FitnessFunction -> Seed -> Chromosome
 chromosomeBattle isStatistic chromosomes fitness seed = if isStatistic && randDouble seed < 0.2
                                                         then head (sortOn fitness chromosomes)
-                                                        else head (sortOn (Data.Ord.Down . fitness) chromosomes)
+                                                        else head (rev (sortOn fitness chromosomes))
 
 
 tournamentSelection :: Bool -> SelectionMethod
