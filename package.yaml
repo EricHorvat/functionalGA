@@ -24,6 +24,8 @@ dependencies:
 - sort >= 1.0.0
 - random >= 1.1
 - transformers >= 0.5.6.2
+- MissingH >= 1.4.1.0
+- parsec >= 3.1.13.0
 
 library:
   source-dirs: src
