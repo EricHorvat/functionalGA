@@ -32,7 +32,7 @@ randDouble g = fst (random g)
 randList :: Random a => Seed -> Int -> ([a], Seed)
 randList g i =
   foldr (\x (y,z) -> (fst (random z) : y, snd (split z)))
-    ([fst (random g)], snd (split g)) [1..i]
+    ([fst (random g)], snd (split g)) [1..i-1]
 
 randInts :: Seed -> Int -> ([Int], Seed)
 randInts = randList

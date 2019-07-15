@@ -1,6 +1,7 @@
 module GAinGA (
   gaFitness,
-  gaChromosomeGenerator
+  gaChromosomeGenerator,
+  selectionMethods
 ) where
 
 import GA
@@ -15,18 +16,54 @@ import System.Random
 
 import Data.Maybe
 
+multipleSelectionMethod :: Double -> SelectionMethod -> SelectionMethod
+multipleSelectionMethod d sMethod = multipleSelection [(eliteSelection,d),(sMethod, 1 - d)]
+
+selectionMethods :: [SelectionMethod]
+selectionMethods = [
+  eliteSelection,
+  randomSelection,
+  rouletteSelection,
+  universalSelection,
+  rankingSelection,
+  tournamentStochasticSelection,
+  tournamentDeterministicSelection
+  ] ++
+  map (uncurry multipleSelectionMethod) tuples where
+    tuples = zip [0.25,0.5,0.75] [rouletteSelection,rankingSelection]
+
+crossMethods :: [CrossMethod]
+crossMethods = [
+  cross1point,
+  cross2point,
+  anularCross,
+  uniformCross
+  ]
+
+mutateMethods :: [MutateMethod]
+mutateMethods = [
+  mutateGenChromosome,
+  mutateMultiGenChromosome
+  ]
+
+replaceMethods :: [ReplaceMethod]
+replaceMethods = [
+  replaceOld,
+  replaceNewOld
+  ]
+
 gaChromosome :: Chromosome
 gaChromosome = [
   BoundedInt (2,4) 0,
   EndCheck [const False, const False] 0,
-  SelectionAllele [eliteSelection, tournamentStochasticSelection] 0,
+  SelectionAllele selectionMethods 0,
   BoundedInt (5 , 250) 5,
-  CrossAllele [cross1point, cross2point] 0,
+  CrossAllele crossMethods 0,
   BoundedDouble (0.0, 1.0) 0.5,
-  MutateAllele [mutateMultiGenChromosome, mutateGenChromosome] 0,
+  MutateAllele mutateMethods 0,
   BoundedDouble (0.0, 1.0) 0.5,
-  ReplaceAllele [replaceOld, replaceNewOld] 0,
-  SelectionAllele [eliteSelection, tournamentStochasticSelection] 0,
+  ReplaceAllele replaceMethods 0,
+  SelectionAllele selectionMethods 0,
   SeedAllele (mkStdGen 0),
   BoundedInt (500,2500) 0
   ]
