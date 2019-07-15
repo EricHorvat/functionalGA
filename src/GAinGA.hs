@@ -17,19 +17,19 @@ import Data.Maybe
 
 gaChromosome :: Chromosome
 gaChromosome = [
-                 BoundedInt (2,4) 0,
-                 EndCheck [const False, const False] 0,
-                 SelectionAllele [eliteSelection, tournamentStochasticSelection] 0,
-                 BoundedInt (5 , 250) 5,
-                 CrossAllele [cross1point, cross2point] 0,
-                 BoundedDouble (0.0, 1.0) 0.5,
-                 MutateAllele [mutateMultiGenChromosome, mutateGenChromosome] 0,
-                 BoundedDouble (0.0, 1.0) 0.5,
-                 ReplaceAllele [replaceOld, replaceNewOld] 0,
-                 SelectionAllele [eliteSelection, tournamentStochasticSelection] 0,
-                 SeedAllele (mkStdGen 0),
-                 BoundedInt (500,2500) 0
-               ]
+  BoundedInt (2,4) 0,
+  EndCheck [const False, const False] 0,
+  SelectionAllele [eliteSelection, tournamentStochasticSelection] 0,
+  BoundedInt (5 , 250) 5,
+  CrossAllele [cross1point, cross2point] 0,
+  BoundedDouble (0.0, 1.0) 0.5,
+  MutateAllele [mutateMultiGenChromosome, mutateGenChromosome] 0,
+  BoundedDouble (0.0, 1.0) 0.5,
+  ReplaceAllele [replaceOld, replaceNewOld] 0,
+  SelectionAllele [eliteSelection, tournamentStochasticSelection] 0,
+  SeedAllele (mkStdGen 0),
+  BoundedInt (500,2500) 0
+  ]
 
 gaFitness :: FitnessFunction
 gaFitness chr = fitnessF best where
@@ -42,10 +42,14 @@ gaFitness chr = fitnessF best where
                      (replaceMethod chr)
                      (selectionReplaceMethod chr)
                      fitnessF
-  initialPop = initialPopulation (boundedIntChromosomeGenerator 10 (-150,150)) (seedd chr) (populationCount chr)
+  initialPop =
+    initialPopulation
+    (boundedIntChromosomeGenerator 5 (-150,150))
+    (getSeed chr)
+    (populationCount chr)
   lastPop = ga (iterations chr) (endCheckFunction chr) nextGenF initialPop
   best = head (eliteSelection lastPop 1 fitnessF (mkStdGen 0))
-  fitnessF = polynomialRootFitness 25
+  fitnessF = polynomialRootFitness 2
 
 gaChromosomeGenerator :: ChromosomeGenerator
 gaChromosomeGenerator seed = mutateFully seed gaChromosome
@@ -86,8 +90,8 @@ selectionReplaceMethod :: Chromosome -> SelectionMethod
 selectionReplaceMethod chromosome = getF (chromosome!!9) where
   getF (SelectionAllele values v) = values!!v
 
-seedd :: Chromosome -> Seed
-seedd chromosome = getSeed (chromosome!!10) where
+getSeed :: Chromosome -> Seed
+getSeed chromosome = getSeed (chromosome!!10) where
   getSeed (SeedAllele v) = v
 
 populationCount :: Chromosome -> Int

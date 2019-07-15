@@ -12,7 +12,8 @@ module GABase (
   ReplaceMethod,
   mutateAllele,
   alleleValue,
-  Allele (BoundedInt, BoundedDouble, Vestment, EndCheck, SelectionAllele, CrossAllele, MutateAllele, ReplaceAllele, FitnessAllele, GeneratorAllele, SeedAllele)
+  Allele (BoundedInt, BoundedDouble, Vestment, EndCheck, SelectionAllele, CrossAllele, MutateAllele, ReplaceAllele, FitnessAllele, GeneratorAllele, SeedAllele),
+  VestmentItem
   ) where
 
 import Random
@@ -24,11 +25,19 @@ type CrossMethod = Seed -> Chromosome -> Chromosome -> (Chromosome,Chromosome)
 
 type MutateMethod = Double -> Seed -> Chromosome -> Chromosome
 
-type ReplaceMethod = Population -> [Chromosome] -> Seed -> SelectionMethod -> FitnessFunction -> Population
+type ReplaceMethod =
+  Population ->
+  [Chromosome] ->
+  Seed ->
+  SelectionMethod ->
+  FitnessFunction ->
+  Population
+
+type VestmentItem = [Double]
 
 data Allele = BoundedInt (Int,Int) Int      |
   BoundedDouble (Double,Double) Double      |
-  Vestment [[Double]] Int                   |
+  Vestment [VestmentItem] Int               |
   EndCheck [EndCheckFunction] Int           |
   SelectionAllele [SelectionMethod] Int     |
   CrossAllele [CrossMethod] Int             |

@@ -20,4 +20,5 @@ polynomialRootFitness value chr = 1 / (1 + abs (sum (
   )))
 
 boundedIntChromosomeGenerator :: Int -> (Int,Int) -> ChromosomeGenerator
-boundedIntChromosomeGenerator l bound seed = mutateFully seed (map (const (BoundedInt bound 0)) [1..l])
+boundedIntChromosomeGenerator l bound seed =
+  mutateFully seed (map (const (BoundedInt bound 0)) [1..l])

@@ -6,7 +6,8 @@ module Selection (
   universalSelection,
   tournamentDeterministicSelection,
   tournamentStochasticSelection,
-  multipleSelection
+  multipleSelection,
+  boltzmann
   ) where
 
 import Utils
@@ -36,18 +37,20 @@ pieFitnessSubselect fitness pop t r = fitnessSelection 0 pop where
         else fitnessSelection (summary+relFitness) chromosomes
 
 rouletteSelection :: SelectionMethod
-rouletteSelection pop k fitness seed = map (pieFitnessSubselect fitness pop total) selectRands where
-  selectRands = fst (randDoubles seed k)
-  popSize = length pop
-  total = sum (map fitness pop)
+rouletteSelection pop k fitness seed =
+  map (pieFitnessSubselect fitness pop total) selectRands where
+    selectRands = fst (randDoubles seed k)
+    popSize = length pop
+    total = sum (map fitness pop)
 
 universalSelection :: SelectionMethod
-universalSelection pop k fitness seed = map (pieFitnessSubselect fitness pop total . selectedFitness) [0..(k-1)] where
-  selectedRand = randDouble seed
-  popSize = length pop
-  total = sum (map fitness pop)
-  unfilteredSelectedFitness i = selectedRand + fromIntegral (i - 1) / fromIntegral k
-  selectedFitness i = if unfilteredSelectedFitness i <= 1
+universalSelection pop k fitness seed =
+  map (pieFitnessSubselect fitness pop total . selectedFitness) [0..(k-1)] where
+    selectedRand = randDouble seed
+    popSize = length pop
+    total = sum (map fitness pop)
+    unfilteredSelectedFitness i = selectedRand + fromIntegral (i - 1) / fromIntegral k
+    selectedFitness i = if unfilteredSelectedFitness i <= 1
                             then unfilteredSelectedFitness i
                             else unfilteredSelectedFitness i - 1
 
@@ -61,23 +64,27 @@ pieOrderSubselect pop t r = orderSelection 0 1 pop where
         else orderSelection (summary+relFitness) (order+1) chromosomes
 
 rankingSelection :: SelectionMethod
-rankingSelection pop k fitness seed = map (pieOrderSubselect alterPop total) selectRands where
-                                        selectRands = fst (randDoubles seed k)
-                                        popSize = length pop
-                                        total = fromIntegral ( (popSize + 1) * popSize) / 2.0
-                                        alterPop = sortOn fitness pop
+rankingSelection pop k fitness seed =
+  map (pieOrderSubselect alterPop total) selectRands where
+    selectRands = fst (randDoubles seed k)
+    popSize = length pop
+    total = fromIntegral ( (popSize + 1) * popSize) / 2.0
+    alterPop = sortOn fitness pop
 
 chromosomeBattle :: Bool -> [Chromosome] -> FitnessFunction -> Seed -> Chromosome
-chromosomeBattle isStatistic chromosomes fitness seed = if isStatistic && randDouble seed < 0.2
-                                                        then head (sortOn fitness chromosomes)
-                                                        else head (rev (sortOn fitness chromosomes))
+chromosomeBattle isStatistic chromosomes fitness seed =
+  if isStatistic && randDouble seed < 0.2
+    then head (sortOn fitness chromosomes)
+    else head (rev (sortOn fitness chromosomes))
 
 
 tournamentSelection :: Bool -> SelectionMethod
-tournamentSelection isStochastic pop k fitness seed = map battle tupledSeeds where
-  battle (seed1,seed2) = chromosomeBattle isStochastic (randomSelection pop 2 fitness seed1) fitness seed2
-  allSeeds = randSeeds seed (k*2)
-  tupledSeeds = zip (take k allSeeds) (drop k allSeeds)
+tournamentSelection isStochastic pop k fitness seed =
+  map battle tupledSeeds where
+    battle (seed1,seed2) = chromosomeBattle isStochastic (picked seed) fitness seed2
+    allSeeds = randSeeds seed (k*2)
+    tupledSeeds = zip (take k allSeeds) (drop k allSeeds)
+    picked = randomSelection pop 2 fitness
 
 tournamentDeterministicSelection :: SelectionMethod
 tournamentDeterministicSelection = tournamentSelection False
@@ -88,9 +95,10 @@ tournamentStochasticSelection  = tournamentSelection True
 multipleSelection :: [(SelectionMethod, Double)] -> SelectionMethod
 multipleSelection tuples pop k fitness seed =
   concatMap (\(f,x)-> f x) (zip (map (uncurry apply) tuples) seeds) where
-    apply selectionMethod percentage = selectionMethod pop (floor(fromIntegral k * percentage)) fitness
+    apply selectionMethod percentage =
+      selectionMethod pop (floor(fromIntegral k * percentage)) fitness
     seeds = randSeeds seed (length tuples)
 
-
 boltzmann :: Int -> FitnessFunction -> FitnessFunction
-boltzmann iteration fitness chromosome = (1000.0 / fromIntegral iteration + 1.0) * fitness chromosome + 1.0
+boltzmann iteration fitness chromosome =
+  (1000.0 / fromIntegral iteration + 1.0) * fitness chromosome + 1.0

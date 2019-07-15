@@ -38,11 +38,12 @@ uniformAlleleCross :: Bool -> Allele -> Allele -> Allele
 uniformAlleleCross boolean a1 a2 = if boolean then a1 else a2
 
 uniformCross :: CrossMethod
-uniformCross seed c1 c2 = (map (uncurry (uncurry uniformAlleleCross)) boolAllelesTuple1,
-                           map (uncurry (uncurry uniformAlleleCross)) boolAllelesTuple2) where
-  booleans = map (> 0.5) (fst (randDoubles seed (length c1)))
-  boolAllelesTuple1 = zip (zip booleans c1) c2
-  boolAllelesTuple2 = zip (zip booleans c2) c1
+uniformCross seed c1 c2 =
+  (map (uncurry (uncurry uniformAlleleCross)) boolAllelesTuple1,
+  map (uncurry (uncurry uniformAlleleCross)) boolAllelesTuple2) where
+    booleans = map (> 0.5) (fst (randDoubles seed (length c1)))
+    boolAllelesTuple1 = zip (zip booleans c1) c2
+    boolAllelesTuple2 = zip (zip booleans c2) c1
 
 cross :: CrossMethod -> Seed -> Double -> [Chromosome] -> [Chromosome]
 cross cross_method seed pCross [] = []

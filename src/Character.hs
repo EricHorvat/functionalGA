@@ -35,7 +35,7 @@ strength :: FitnessFunction
 strength = getAttribute 100.0 strengthItem
 
 resistance :: FitnessFunction
-resistance = getAttribute 100.0 resistanceItem
+resistance = getAttribute 1.0 resistanceItem
 
 hp :: FitnessFunction
 hp = getAttribute 100.0 hpItem
@@ -77,5 +77,6 @@ keeperFitness = characterFitness 0.1 0.9
 assassinFitness :: FitnessFunction
 assassinFitness = characterFitness 0.7 0.3
 
-characterChromosomeGenerator :: [[[Double]]] -> ChromosomeGenerator
-characterChromosomeGenerator values seed = mutateFully seed ( BoundedDouble (1.3,2.0) 0.0 : map (flip Vestment 0) values)
+characterChromosomeGenerator :: [[VestmentItem]] -> ChromosomeGenerator
+characterChromosomeGenerator values seed =
+  mutateFully seed ( BoundedDouble (1.3,2.0) 0.0 : map (flip Vestment 0) values)
